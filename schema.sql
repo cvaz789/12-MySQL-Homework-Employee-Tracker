@@ -3,40 +3,46 @@ CREATE DATABASE application_db;
 
 USE application_db;
 
+
 CREATE TABLE department (
-    id INT(10) AUTO_INCREMENT,
+    id INTEGER AUTO_INCREMENT,
     dept_name VARCHAR(50),
     PRIMARY KEY(id)
 );
 
-CREATE TABLE roles(
-    id INT(10) AUTO_INCREMENT,
+CREATE TABLE roles (
+    id INTEGER AUTO_INCREMENT,
     title VARCHAR(50),
     salary DECIMAL(10,4),
-    department_id INT(10),
-    PRIMARY KEY(id)
+    department_id INTEGER,
+    PRIMARY KEY(id),
+    FOREIGN KEY (department_id) REFERENCES department(id)
 );
 
 CREATE TABLE employees(
-    id INT(10),
+    id INTEGER AUTO_INCREMENT,
     first_name VARCHAR(50),
     last_name VARCHAR(50),
-    role_id INT(10),
-    manager_id INT(10),
-    PRIMARY KEY(id)
+    role_id INTEGER,
+    manager_id INTEGER,
+    PRIMARY KEY(id),
+    FOREIGN KEY (role_id) REFERENCES roles(id),
+    FOREIGN KEY (manager_id) REFERENCES employees(id)
 );
 
+INSERT INTO department(dept_name)
+VALUES ("Sales"), ("Engineering"), ("Finance"), ("Legal"), ("Executive");
 
-INSERT INTO department(id, dept_name)
-VALUES (1,"Sales"), (2, "Engineering"), (3, "Finance"), (4, "Legal"), (5, "Executive");
+INSERT INTO roles(title, salary, department_id)
+VALUES("Sales Lead", 10000, 1), ("Lead Engineer", 150000, 2 ), ("Accountant", 16000, 3), ("Legal Team Lead", 250000, 4),("Accountant", 125000, 3), ("Software Engineer", 120000, 2), ("Director", 400000, 5);
 
-INSERT INTO roles(id, title, salary, department_id)
-VALUES(1, "Sales Lead", 10000, 1), (2, "Lead Engineer", 150000, 2 ), (3, "Accountant", 16000, 3), (4, "Legal Team Lead", 250000, 4), (5, "Accountant", 125000, 3), (6, "Software Engineer", 120000, 2), (7, "Director", 400000, 5) ;
-
-INSERT INTO employees(id, first_name, last_name, role_id, manager_id)
-VALUES (1, "Laura", "Rodriguez", 1, 9),(2, "Anna", "Arendt", 4, 9),(3, "Neil", "Diamond", 2, 9),(4, "Eros", "Ramazzoti", 2, 9),(5, "Laura", "Pausini", 1, 9),(6, "John", "Oliver", 3, 9),(7, "Placido", "Rodriguez", 3, 9), (8, "Bill", "Gates", 3, 9), (9, "Christian", "Vazquez", 7, 9);
-
+INSERT INTO employees(first_name, last_name, role_id)
+VALUES ("Anna", "Arendt", 4),("Neil", "Diamond", 2),("Eros", "Ramazzoti", 2),("Laura", "Pausini", 1),("John", "Oliver", 3),("Placido", "Rodriguez", 3), ("Bill", "Gates", 3), ("Christian", "Vazquez", 7);
 
 
-select * from employees
+select * from roles;
+
+
+
+
 
