@@ -76,7 +76,7 @@ function addData() {
                     break;
             }
         })
-}
+};
 
 function addEmp() {
     inquirer
@@ -117,6 +117,41 @@ function addEmp() {
                }
            )
         })
+};
+
+function addRole() {
+    inquirer
+        .prompt([
+            {
+                name: "roleName",
+                type: "input",
+                message: "Type the new title to add"
+            },
+            {
+                name: "salaryAmount",
+                type: "input",
+                message: "Type the salary of the new title"
+            },
+            {
+                name: "departmentId",
+                type: "input",
+                message: "Type the the manager_id of this new title"
+            }
+        ]).then(function(answer) {
+            connection.query(
+                "INSERT INTO roles SET ?",
+                {
+                    title: answer.roleName,
+                    salary: answer.salaryAmount,
+                    department_id: answer.departmentId
+                },
+                function(err) {
+                    if(err) throw err;
+                    console.log("The new title was added to the system")
+                    runSearch();
+                }
+            )
+        })
 }
 
 function viewData() {
@@ -145,12 +180,13 @@ function viewData() {
                     break;
             }   
         })
-}
+};
 
 
 function allData() {
     var query = "SELECT first_name, last_name, title, salary, dept_name FROM employees INNER JOIN roles ON employees.role_id = roles.id INNER JOIN department ON department.id = roles.department_id";
     connection.query(query, function(err,res) {
+        console.log("hello");
         console.table(res);
         runSearch();
     })
@@ -197,7 +233,7 @@ function byDept() {
                     break; 
             }
         })
-}
+};
 
 function sales() {
     var query = "SELECT dept_name, first_name, last_name FROM department INNER JOIN employees ON department.id = employees.role_id WHERE dept_name = 'Sales'";
