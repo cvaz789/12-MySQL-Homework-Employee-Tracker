@@ -8,7 +8,7 @@ var connection = mysql.createConnection({
   
     user: "root",
     password: "Developer01",
-    database: "application_db"
+    database: "app_db"
   });
 
 connection.connect(function(err) {
@@ -25,7 +25,7 @@ function runSearch() {
             choices: [
                 "Add departments, roles, employees",
                 "View departments, roles, employees",
-                "Update employee roles",
+                "Update Information in Tables",
                 "Exit"
             ]
         }).then(function(answer) {
@@ -38,7 +38,7 @@ function runSearch() {
                     viewData();
                     break;
                 
-                case "Update employee roles":
+                case "Update Information in Tables":
                     updateData();
                     break;
 
@@ -133,9 +133,9 @@ function addRole() {
                 message: "Type the salary of the new title"
             },
             {
-                name: "departmentId",
+                name: "departmentID",
                 type: "input",
-                message: "Type the the manager_id of this new title"
+                message: "Type the id of the department where the new employee will be residing"
             }
         ]).then(function(answer) {
             connection.query(
@@ -143,15 +143,37 @@ function addRole() {
                 {
                     title: answer.roleName,
                     salary: answer.salaryAmount,
-                    department_id: answer.departmentId
+                    department_id: answer.departmentID
                 },
                 function(err) {
                     if(err) throw err;
-                    console.log("The new title was added to the system")
                     runSearch();
                 }
             )
         })
+}
+
+function addDept() {
+
+    inquirer
+        .prompt({
+            name: "deptName",
+            type: "input",
+            message: "Type a new department name"
+        }).then(function(answer) {
+            connection.query(
+                "INSERT INTO department SET ?",
+                {
+                    dept_name: answer.deptName
+                },
+                function(err) {
+                    if(err) throw err;
+                    runSearch();
+                }
+            )
+            
+        })
+
 }
 
 function viewData() {
@@ -275,3 +297,85 @@ function executive() {
     })
 }
 
+function updateData() {
+    inquirer
+        .prompt({
+            name:"action",
+            type:"list",
+            message:"What table would you like to update?",
+            choices:[
+                "Employees",
+                "Departments",
+                "Roles",
+                "return"
+            ]
+        }).then(function(answer) {
+            switch (answer.action) {
+                case "Employees":
+                    upEmp();
+                    break;
+                case "Departments":
+                    upDept();
+                    break;
+                case "Roles":
+                    upRol();
+                    break;
+                case "return":
+                    runSearch();
+                    break;
+            }
+        })
+};
+
+function upEmp() {
+
+    var query = "SELECT first_name, last_name FROM employees INNER JOIN roles ON employees.role_id = roles.id INNER JOIN department ON department.id = roles.department_id";
+    connection.query(query, function(err,res) {
+    console.table(res);
+    });
+
+    inquirer
+        .prompt([
+            {
+                name: "employeeID",
+                type: "input",
+                message: "Enter the id of the employee you would like to update"
+            },
+            {
+                name: "employeeName",
+                type: "input",
+                message: "Enter the name of the employee you would like to update"
+            },
+            {
+                name: "lastName",
+                type: "input",
+                message: "Type the new last name of the employee"
+            },
+    ]).then(function(answer) {
+        var query = connection.query( 
+            "UPDATE employees SET ? WHERE ?",
+            [
+                {
+                    first_name: answer.employeeName,
+                    lasT_name: answer.lastName
+                    
+                },
+                {
+                    id: answer.employeeID
+                }
+
+            ],
+            function(err, query) {
+                if (err) throw err;
+                console.log(query);
+                runSearch();
+            }
+
+        )
+
+        console.log(query.sql);
+    })
+
+}
+// function upDept();
+// function upRol();
