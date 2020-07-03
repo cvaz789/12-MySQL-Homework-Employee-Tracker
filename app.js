@@ -59,7 +59,8 @@ function addData() {
             choices: [
                 "Add a new employee",
                 "Add a new role",
-                "Add a new department"
+                "Add a new department",
+                "Return"
             ]
         }).then(function(answer) {
             switch (answer.action) {
@@ -73,6 +74,9 @@ function addData() {
 
                 case "Add a new department":
                     addDept();
+                    break;
+                case "Return":
+                    runSearch();
                     break;
             }
         })
@@ -329,7 +333,7 @@ function updateData() {
 
 function upEmp() {
 
-    var query = "SELECT first_name, last_name FROM employees INNER JOIN roles ON employees.role_id = roles.id INNER JOIN department ON department.id = roles.department_id";
+    var query = "SELECT * FROM employees INNER JOIN roles ON employees.role_id = roles.id INNER JOIN department ON department.id = roles.department_id";
     connection.query(query, function(err,res) {
     console.table(res);
     });
@@ -351,13 +355,25 @@ function upEmp() {
                 type: "input",
                 message: "Type the new last name of the employee"
             },
+            {
+                name: "roleID",
+                type: "input",
+                message: "Type the new role ID of the employee"
+            },
+            {
+                name: "managerID",
+                type: "input",
+                message: "Type the new manager ID of the employee"
+            }
     ]).then(function(answer) {
         var query = connection.query( 
             "UPDATE employees SET ? WHERE ?",
             [
                 {
                     first_name: answer.employeeName,
-                    lasT_name: answer.lastName
+                    last_name: answer.lastName,
+                    role_id: answer.roleID,
+                    manager_id: answer.managerID
                     
                 },
                 {
